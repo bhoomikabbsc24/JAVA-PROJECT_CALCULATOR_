@@ -1,7 +1,15 @@
-package calc;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
+public class Calculator extends JFrame implements ActionListener {
+    private final JTextField display;
+    private final JTextArea historyArea;
+    private boolean darkTheme = false;
+    private final CalculatorEngine engine = new CalculatorEngine();
+    private final HistoryManager historyManager = new HistoryManager();
+
 
 public class Calc {
     public static void main(String[] args) throws Exception {
