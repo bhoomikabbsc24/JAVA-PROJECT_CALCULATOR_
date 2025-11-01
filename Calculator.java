@@ -10,27 +10,74 @@ public class Calculator extends JFrame implements ActionListener {
     private final CalculatorEngine engine = new CalculatorEngine();
     private final HistoryManager historyManager = new HistoryManager();
 
+    public Calculator() {
+        setTitle("Enhanced Java Calculator");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(820, 520);
+        setLayout(new BorderLayout(8,8));
+        setLocationRelativeTo(null);
 
-public class Calc {
-    public static void main(String[] args) throws Exception {
-        BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
-        String sIn;
+        // Top: display
+        display = new JTextField();
+        display.setFont(new Font("Consolas", Font.BOLD, 26));
+        display.setHorizontalAlignment(SwingConstants.RIGHT);
+        display.setPreferredSize(new Dimension(0, 60));
+        add(display, BorderLayout.NORTH);
 
-        try {
-            System.out.println("Введте выражение для расчета. Поддерживаются цифры, операции +,-,*,/,^,% и приоритеты в виде скобок ( и ):");
-            sIn = d.readLine();
-            sIn = opn(sIn);
-            System.out.println(calculate(sIn));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        // Center: keypad
+        JPanel grid = new JPanel(new GridLayout(6, 7, 6, 6));
+        String[] labels = {
+            "7","8","9","/","sqrt","(", "Del",
+            "4","5","6","*","^",")","C",
+            "1","2","3","-","log","ln","±",
+            "0",".","=", "+","sin","cos","tan",
+            "nCr","nPr","fact","%","abs","π","e",
+            "MS","MR","Hist","Theme","Deg","Rad","M"
+        };
+
+        for (String s : labels) {
+            JButton b = new JButton(s);
+            b.setFont(new Font("Arial", Font.PLAIN, 14));
+            b.addActionListener(this);
+            grid.add(b);
         }
-    }
 
-    /**
-     * Преобразовать строку в обратную польскую нотацию
-     * @param sIn Входная строка
-     * @return Выходная строка в обратной польской нотации
-     */
+        // Right: history panel
+        historyArea = new JTextArea();
+        historyArea.setEditable(false);
+        historyArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane histScroll = new JScrollPane(historyArea);
+        histScroll.setPreferredSize(new Dimension(300, 0));
+
+        JPanel center = new JPanel(new BorderLayout());
+        center.add(grid, BorderLayout.CENTER);
+        center.add(histScroll, BorderLayout.EAST);
+
+        add(center, BorderLayout.CENTER);
+
+        // Bottom: simple label
+        JLabel footer = new JLabel("Enter expression and press =  — supports functions: sin, cos, tan, ln, log, sqrt, nCr(n,r), nPr(n,r), fact(n)");
+        footer.setFont(new Font("Arial", Font.PLAIN, 12));
+        add(footer, BorderLayout.SOUTH);
+
+        // Key bindings: Enter -> evaluate, Esc -> clear, Backspace -> delete last char
+        display.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) evaluate();
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) display.setText("");
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    // default behavior is fine
+                }
+            }
+        });
+
+
+
+
+
+
+
+        
     private static String opn(String sIn) throws Exception {
         StringBuilder sbStack = new StringBuilder(""), sbOut = new StringBuilder("");
         char cIn, cTmp;
