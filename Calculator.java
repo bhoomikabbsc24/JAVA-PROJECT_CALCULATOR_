@@ -70,51 +70,61 @@ public class Calculator extends JFrame implements ActionListener {
                 }
             }
         });
+        
+        // initial history load and theme
+        refreshHistory();
+        applyTheme();
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        try {
+            switch (cmd) {
+                case "=" -> evaluate();
+                case "C" -> display.setText("");
+                case "Del" -> {
+                    String s = display.getText();
+                    if (!s.isEmpty()) display.setText(s.substring(0, s.length()-1));
+                }
+                case "Hist" -> refreshHistory();
+                case "Theme" -> { darkTheme = !darkTheme; applyTheme(); }
+                case "MS" -> { // store memory M
+                    try {
+                        double v = Double.parseDouble(display.getText());
+                        engine.storeMemory(v);
+                        JOptionPane.showMessageDialog(this, "Stored to M");
+                    } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Bad number"); }
+                }
+                case "MR" -> display.setText(Double.toString(engine.recallMemory()));
+                case "Deg" -> engine.setDegrees(true);
+                case "Rad" -> engine.setDegrees(false);
+                case "±" -> toggleSign();
+                case "π" -> insertAtCaret(Double.toString(Math.PI));
+                case "e" -> insertAtCaret(Double.toString(Math.E));
+                case "sqrt","sin","cos","tan","log","ln","abs","fact","nCr","nPr" -> insertAtCaret(cmd + "(");
+                case "x" -> insertAtCaret("*");
+                case "M" -> insertAtCaret("M");
+                default -> insertAtCaret(cmd);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
 
 
 
 
+
+
+    
 
 
 
         
-    private static String opn(String sIn) throws Exception {
-        StringBuilder sbStack = new StringBuilder(""), sbOut = new StringBuilder("");
-        char cIn, cTmp;
 
-        for (int i = 0; i < sIn.length(); i++) {
-            cIn = sIn.charAt(i);
-            if (isOp(cIn)) {
-                while (sbStack.length() > 0) {
-                    cTmp = sbStack.substring(sbStack.length()-1).charAt(0);
-                    if (isOp(cTmp) && (opPrior(cIn) <= opPrior(cTmp))) {
-                        sbOut.append(" ").append(cTmp).append(" ");
-                        sbStack.setLength(sbStack.length()-1);
-                    } else {
-                        sbOut.append(" ");
-                        break;
-                    }
-                }
-                sbOut.append(" ");
-                sbStack.append(cIn);
-            } else if ('(' == cIn) {
-                sbStack.append(cIn);
-            } else if (')' == cIn) {
-                cTmp = sbStack.substring(sbStack.length()-1).charAt(0);
-                while ('(' != cTmp) {
-                    if (sbStack.length() < 1) {
-                        throw new Exception("Ошибка разбора скобок. Проверьте правильность выражения.");
-                    }
-                    sbOut.append(" ").append(cTmp);
-                    sbStack.setLength(sbStack.length()-1);
-                    cTmp = sbStack.substring(sbStack.length()-1).charAt(0);
-                }
-                sbStack.setLength(sbStack.length()-1);
-            } else {
-                // Если символ не оператор - добавляем в выходную последовательность
-                sbOut.append(cIn);
-            }
-        }
 
         // Если в стеке остались операторы, добавляем их в входную строку
         while (sbStack.length() > 0) {
