@@ -114,6 +114,50 @@ public class Calculator extends JFrame implements ActionListener {
         }
     }
 
+    private void insertAtCaret(String txt) {
+        int pos = display.getCaretPosition();
+        String before = display.getText();
+        String after = before.substring(0, pos) + txt + before.substring(pos);
+        display.setText(after);
+        display.requestFocus();
+        display.setCaretPosition(pos + txt.length());
+    }
+
+    private void toggleSign() {
+        String t = display.getText();
+        if (t.isEmpty()) return;
+        if (t.startsWith("-")) display.setText(t.substring(1));
+        else display.setText("-" + t);
+    }
+
+    private void evaluate() {
+        String expr = display.getText().trim();
+        if (expr.isEmpty()) return;
+        try {
+            double res = engine.evaluate(expr);
+            String out;
+            if (Math.abs(Math.rint(res) - res) < 1e-10) out = String.format("%.0f", res);
+            else out = Double.toString(res);
+            historyManager.append(expr, out);
+            refreshHistory();
+            display.setText(out);
+            engine.storeMemory(res);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Evaluation error: " + ex.getMessage());
+        }
+    }
+
+    private void refreshHistory() {
+        try {
+            java.util.List<String> lines = historyManager.readAll();
+            StringBuilder sb = new StringBuilder();
+            for (int i = lines.size()-1; i >= 0; i--) sb.append(lines.get(i)).append("\n");
+            historyArea.setText(sb.toString());
+        } catch (Exception e) {
+            historyArea.setText("");
+        }
+    }
+
 
 
 
@@ -126,102 +170,5 @@ public class Calculator extends JFrame implements ActionListener {
         
 
 
-        // Если в стеке остались операторы, добавляем их в входную строку
-        while (sbStack.length() > 0) {
-            sbOut.append(" ").append(sbStack.substring(sbStack.length()-1));
-            sbStack.setLength(sbStack.length()-1);
-        }
-
-        return  sbOut.toString();
-    }
-
-    /**
-     * Функция проверяет, является ли текущий символ оператором
-     */
-    private static boolean isOp(char c) {
-        switch (c) {
-            case '-':
-            case '+':
-            case '*':
-            case '/':
-            case '^':
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Возвращает приоритет операции
-     * @param op char
-     * @return byte
-     */
-    private static byte opPrior(char op) {
-        switch (op) {
-            case '^':
-                return 3;
-            case '*':
-            case '/':
-            case '%':
-                return 2;
-        }
-        return 1; // Тут остается + и -
-    }
-
-    /**
-     * Считает выражение, записанное в обратной польской нотации
-     * @param sIn
-     * @return double result
-     */
-    private static double calculate(String sIn) throws Exception {
-        double dA = 0, dB = 0;
-        String sTmp;
-        Deque<Double> stack = new ArrayDeque<Double>();
-        StringTokenizer st = new StringTokenizer(sIn);
-        while(st.hasMoreTokens()) {
-            try {
-                sTmp = st.nextToken().trim();
-                if (1 == sTmp.length() && isOp(sTmp.charAt(0))) {
-                    if (stack.size() < 2) {
-                        throw new Exception("Неверное количество данных в стеке для операции " + sTmp);
-                    }
-                    dB = stack.pop();
-                    dA = stack.pop();
-                    switch (sTmp.charAt(0)) {
-                        case '+':
-                            dA += dB;
-                            break;
-                        case '-':
-                            dA -= dB;
-                            break;
-                        case '/':
-                            dA /= dB;
-                            break;
-                        case '*':
-                            dA *= dB;
-                            break;
-                        case '%':
-                            dA %= dB;
-                            break;
-                        case '^':
-                            dA = Math.pow(dA, dB);
-                            break;
-                        default:
-                            throw new Exception("Недопустимая операция " + sTmp);
-                    }
-                    stack.push(dA);
-                } else {
-                    dA = Double.parseDouble(sTmp);
-                    stack.push(dA);
-                }
-            } catch (Exception e) {
-                throw new Exception("Недопустимый символ в выражении");
-            }
-        }
-
-        if (stack.size() > 1) {
-            throw new Exception("Количество операторов не соответствует количеству операндов");
-        }
-
-        return stack.pop();
-    }
-}
+     
+   
