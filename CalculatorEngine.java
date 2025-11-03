@@ -61,3 +61,9 @@ public class CalculatorEngine {
         }
         return output;
     }
+    private double evalRPN(List<String> rpn) {
+        Stack<Double> st = new Stack<>();
+        for (String token: rpn) {
+            if (isNumber(token)) st.push(Double.parseDouble(token));
+            else if (isVariable(token)) st.push(variables.getOrDefault(token, 0.0));
+            else if (functions.contains(token)) applyFunction(token, st);
