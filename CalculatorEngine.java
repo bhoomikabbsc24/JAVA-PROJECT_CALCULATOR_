@@ -76,3 +76,21 @@ public class CalculatorEngine {
         if (st.size() != 1) throw new RuntimeException("Invalid expression");
         return st.pop();
     }
+    private void applyFunction(String fn, Stack<Double> st) {
+        switch (fn) {
+            case "sin": applyUnary(st, x -> Math.sin(adjustAngle(x))); break;
+            case "cos": applyUnary(st, x -> Math.cos(adjustAngle(x))); break;
+            case "tan": applyUnary(st, x -> Math.tan(adjustAngle(x))); break;
+            case "asin": applyUnary(st, x -> revertAngle(Math.asin(x))); break;
+            case "acos": applyUnary(st, x -> revertAngle(Math.acos(x))); break;
+            case "atan": applyUnary(st, x -> revertAngle(Math.atan(x))); break;
+            case "ln": applyUnary(st, Math::log); break;
+            case "log": applyUnary(st, x -> Math.log10(x)); break;
+            case "sqrt": applyUnary(st, Math::sqrt); break;
+            case "abs": applyUnary(st, Math::abs); break;
+            case "fact": applyUnary(st, this::factorial); break;
+            case "nCr": applyBinaryInt(st, this::nCr); break;
+            case "nPr": applyBinaryInt(st, this::nPr); break;
+            default: throw new RuntimeException("Unsupported function "+fn);
+        }
+    }
