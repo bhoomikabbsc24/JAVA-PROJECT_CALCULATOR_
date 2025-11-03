@@ -67,3 +67,12 @@ public class CalculatorEngine {
             if (isNumber(token)) st.push(Double.parseDouble(token));
             else if (isVariable(token)) st.push(variables.getOrDefault(token, 0.0));
             else if (functions.contains(token)) applyFunction(token, st);
+            else if (isOperator(token)) {
+                if (st.size() < 2) throw new RuntimeException("Insufficient operands");
+                double b = st.pop(); double a = st.pop();
+                st.push(applyOp(token, a, b));
+            } else throw new RuntimeException("Unknown RPN token "+token);
+        }
+        if (st.size() != 1) throw new RuntimeException("Invalid expression");
+        return st.pop();
+    }
