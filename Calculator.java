@@ -157,7 +157,18 @@ public class Calculator extends JFrame implements ActionListener {
             historyArea.setText("");
         }
     }
+    private void applyTheme() {
+         Color bg = darkTheme ? Color.DARK_GRAY : Color.WHITE;
+         Color fg = darkTheme ? Color.WHITE : Color.BLACK;
+         display.setBackground(bg); display.setForeground(fg);
+         historyArea.setBackground(bg); historyArea.setForeground(fg);
+         getContentPane().setBackground(darkTheme ? Color.GRAY : UIManager.getColor("Panel.background"));
+     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Calculator::new);
+    }
+}
 
 
 
