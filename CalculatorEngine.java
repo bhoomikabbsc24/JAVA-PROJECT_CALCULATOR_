@@ -94,3 +94,15 @@ public class CalculatorEngine {
             default: throw new RuntimeException("Unsupported function "+fn);
         }
     }
+    private double adjustAngle(double v) { return degrees ? Math.toRadians(v) : v; }
+    private double revertAngle(double r) { return degrees ? Math.toDegrees(r) : r; }
+
+    private void applyUnary(Stack<Double> st, DoubleUnaryOperator op) {
+        if (st.isEmpty()) throw new RuntimeException("Insufficient args");
+        st.push(op.applyAsDouble(st.pop()));
+    }
+    private void applyBinaryInt(Stack<Double> st, java.util.function.BiFunction<Integer,Integer,Double> f) {
+        if (st.size() < 2) throw new RuntimeException("Insufficient args");
+        int b = (int)Math.round(st.pop()); int a = (int)Math.round(st.pop());
+        st.push(f.apply(a,b));
+    }
