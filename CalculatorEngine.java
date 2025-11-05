@@ -106,3 +106,10 @@ public class CalculatorEngine {
         int b = (int)Math.round(st.pop()); int a = (int)Math.round(st.pop());
         st.push(f.apply(a,b));
     }
+    private double factorial(double x) {
+        int n = (int)Math.round(x);
+        if (n < 0) throw new RuntimeException("Negative factorial");
+        BigInteger res = BigInteger.ONE;
+        for (int i=2;i<=n;i++) res = res.multiply(BigInteger.valueOf(i));
+        return res.doubleValue();
+    }
