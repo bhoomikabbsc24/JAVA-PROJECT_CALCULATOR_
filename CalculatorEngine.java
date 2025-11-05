@@ -113,3 +113,7 @@ public class CalculatorEngine {
         for (int i=2;i<=n;i++) res = res.multiply(BigInteger.valueOf(i));
         return res.doubleValue();
     }
+    private Double nCr(Integer n, Integer r) {
+        if (r<0 || n<0 || r>n) return 0.0;
+        return (double)binomial(n,r);
+    }
