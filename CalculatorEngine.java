@@ -117,3 +117,10 @@ public class CalculatorEngine {
         if (r<0 || n<0 || r>n) return 0.0;
         return (double)binomial(n,r);
     }
+    private Double nPr(Integer n, Integer r) {
+        if (r<0 || n<0 || r>n) return 0.0;
+        BigInteger res = BigInteger.ONE;
+        for (int i=0;i<r;i++) res = res.multiply(BigInteger.valueOf(n-i));
+        return res.doubleValue();
+    }
+    
