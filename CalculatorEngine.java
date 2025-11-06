@@ -123,4 +123,13 @@ public class CalculatorEngine {
         for (int i=0;i<r;i++) res = res.multiply(BigInteger.valueOf(n-i));
         return res.doubleValue();
     }
-    
+      private long binomial(int n,int k) {
+        if (k<0||k>n) return 0;
+        k = Math.min(k, n-k);
+        BigInteger num = BigInteger.ONE, den = BigInteger.ONE;
+        for (int i=1;i<=k;i++) {
+            num = num.multiply(BigInteger.valueOf(n-(k-i)));
+            den = den.multiply(BigInteger.valueOf(i));
+        }
+        return num.divide(den).longValue();
+    }  
