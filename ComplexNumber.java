@@ -3,3 +3,7 @@ public class ComplexNumber {
     public ComplexNumber(double r, double i) { re = r; im = i; }
     public ComplexNumber add(ComplexNumber o) { return new ComplexNumber(re+o.re, im+o.im); }
     public ComplexNumber sub(ComplexNumber o) { return new ComplexNumber(re-o.re, im-o.im); }
+    public ComplexNumber mul(ComplexNumber o) { return new ComplexNumber(re*o.re - im*o.im, re*o.im + im*o.re); }
+    public ComplexNumber div(ComplexNumber o) { double d = o.re*o.re + o.im*o.im; return new ComplexNumber((re*o.re+im*o.im)/d, (im*o.re - re*o.im)/d); }
+    public double mag() { return Math.hypot(re, im); }
+    public ComplexNumber conj() { return new ComplexNumber(re, -im); }
