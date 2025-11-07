@@ -132,4 +132,10 @@ public class CalculatorEngine {
             den = den.multiply(BigInteger.valueOf(i));
         }
         return num.divide(den).longValue();
-    }  
+    }
+    private static boolean isNumber(String s) { return s.matches("\\d*\\.\\d+|\\d+"); }
+    private static boolean isVariable(String s) { return s.matches("[a-zA-Z_][a-zA-Z0-9_]*"); }
+    private static boolean isOperator(String s) { return "+-*/^%".contains(s); }
+    private static int precedence(String op) {
+        switch(op) { case "+": case "-": return 2; case "*": case "/": case "%": return 3; case "^": return 4; default: return 0; }
+    }
