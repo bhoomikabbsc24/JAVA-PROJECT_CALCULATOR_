@@ -7,3 +7,9 @@ public class ComplexNumber {
     public ComplexNumber div(ComplexNumber o) { double d = o.re*o.re + o.im*o.im; return new ComplexNumber((re*o.re+im*o.im)/d, (im*o.re - re*o.im)/d); }
     public double mag() { return Math.hypot(re, im); }
     public ComplexNumber conj() { return new ComplexNumber(re, -im); }
+    @Override public String toString() {
+        if (im==0) return String.format("%.6f", re);
+        if (re==0) return String.format("%.6fi", im);
+        return String.format("%.6f%+.6fi", re, im);
+    }
+}
