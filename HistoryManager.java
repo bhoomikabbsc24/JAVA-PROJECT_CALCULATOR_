@@ -7,4 +7,12 @@ public class HistoryManager {
 
     public HistoryManager() {
         this("history.txt");
-    }// to add code later
+    }
+    public HistoryManager(String filename) {
+        historyFile = Paths.get(filename);
+        try {
+            if (!Files.exists(historyFile)) Files.createFile(historyFile);
+        } catch (IOException e) {
+            // ignore - will create on append
+        }
+    }
