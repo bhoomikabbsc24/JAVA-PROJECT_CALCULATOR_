@@ -44,3 +44,17 @@ public class Matrix {
         }
         return mm;
     }
+public Matrix inverse() {
+        double det = determinant(); if (Math.abs(det) < 1e-12) throw new RuntimeException("Singular");
+        int n = rows; double[][] cof = new double[n][n];
+        for (int i=0;i<n;i++) for (int j=0;j<n;j++) cof[i][j] = Math.pow(-1,i+j) * det(minor(a,i,j));
+        double[][] adj = new double[n][n]; for (int i=0;i<n;i++) for (int j=0;j<n;j++) adj[j][i] = cof[i][j];
+        double[][] inv = new double[n][n]; for (int i=0;i<n;i++) for (int j=0;j<n;j++) inv[i][j] = adj[i][j] / det;
+        return new Matrix(inv);
+    }
+    @Override public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0;i<rows;i++) sb.append(Arrays.toString(a[i])).append("\n");
+        return sb.toString();
+    }
+}
