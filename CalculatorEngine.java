@@ -139,4 +139,21 @@ public class CalculatorEngine {
     private static int precedence(String op) {
         switch(op) { case "+": case "-": return 2; case "*": case "/": case "%": return 3; case "^": return 4; default: return 0; }
     }
+    private static boolean isLeftAssoc(String op) { return !op.equals("^"); }
+    private double applyOp(String op,double a,double b) {
+        switch(op) {
+            case "+": return a+b;
+            case "-": return a-b;
+            case "*": return a*b;
+            case "/": if (b==0) throw new RuntimeException("Division by zero"); return a/b;
+            case "%": return a%b;
+            case "^": return Math.pow(a,b);
+            default: throw new RuntimeException("Unknown op");
+        }
+    }
+
+    public void setVariable(String name, double v) { variables.put(name, v); }
+    public double getVariable(String name) { return variables.getOrDefault(name, 0.0); }
+}
+
 
