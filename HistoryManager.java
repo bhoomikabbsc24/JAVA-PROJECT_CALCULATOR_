@@ -33,3 +33,11 @@ public void append(String expr, String result) {
             throw new RuntimeException(e);
         }
     }
+public void clear() {
+        try {
+            Files.write(historyFile, new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
