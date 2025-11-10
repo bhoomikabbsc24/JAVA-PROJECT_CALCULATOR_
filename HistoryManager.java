@@ -16,3 +16,20 @@ public class HistoryManager {
             // ignore - will create on append
         }
     }
+public void append(String expr, String result) {
+        String line = java.time.LocalDateTime.now() + " | " + expr + " = " + result + System.lineSeparator();
+        try {
+            Files.write(historyFile, line.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> readAll() {
+        try {
+            if (!Files.exists(historyFile)) return new ArrayList<>();
+            return Files.readAllLines(historyFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
