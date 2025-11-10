@@ -16,7 +16,7 @@ public class HistoryManager {
             // ignore - will create on append
         }
     }
-public void append(String expr, String result) {
+    public void append(String expr, String result) {
         String line = java.time.LocalDateTime.now() + " | " + expr + " = " + result + System.lineSeparator();
         try {
             Files.write(historyFile, line.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -33,7 +33,8 @@ public void append(String expr, String result) {
             throw new RuntimeException(e);
         }
     }
-public void clear() {
+
+    public void clear() {
         try {
             Files.write(historyFile, new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -41,3 +42,4 @@ public void clear() {
         }
     }
 }
+
