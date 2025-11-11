@@ -25,25 +25,67 @@ public class CalculatorEngine {
         return evalRPN(rpn);
     }
 
+    // =================================================================
+    // CORRECTED toRPN METHOD (FIXES UNARY MINUS AMBIGUITY)
+    // =================================================================
+
     private List<String> toRPN(String expr) {
         expr = expr.replaceAll("\\s+","").replaceAll("×", "*").replaceAll("÷", "/");
         List<String> output = new ArrayList<>();
         Stack<String> ops = new Stack<>();
+        
+        // 1. Tokenization
         Pattern tokenPattern = Pattern.compile("\\d*\\.\\d+|\\d+|[a-zA-Z_][a-zA-Z0-9_]*|[()+\\-*/^%,]");
         Matcher m = tokenPattern.matcher(expr);
         List<String> tokens = new ArrayList<>();
         while (m.find()) tokens.add(m.group());
+
+        // 2. Unary Minus Pre-processing 
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+            if (token.equals("-")) {
+                boolean isUnary = false;
+                // Unary if it's the first token
+                if (i == 0) {
+                    isUnary = true;
+                } else {
+                    String prev = tokens.get(i - 1);
+                    // Unary if it follows an opening parenthesis '(', comma ',' or another operator/function
+                    if (prev.equals("(") || isOperator(prev) || functions.contains(prev) || prev.equals(",")) {
+                        isUnary = true;
+                    }
+                }
+
+                if (isUnary) {
+                    // Replace the binary minus with a special unary token '_'
+                    tokens.set(i, "_"); 
+                }
+            }
+        }
+        
+        // 3. Shunting-Yard Algorithm
         for (String token: tokens) {
             if (isNumber(token) || isVariable(token)) output.add(token);
             else if (functions.contains(token)) ops.push(token);
             else if (token.equals(",")) {
                 while (!ops.isEmpty() && !ops.peek().equals("(")) output.add(ops.pop());
                 if (ops.isEmpty()) throw new RuntimeException("Misplaced comma");
-            } else if (isOperator(token)) {
-                while (!ops.isEmpty() && isOperator(ops.peek()) &&
-                        ((isLeftAssoc(token) && precedence(token) <= precedence(ops.peek())) ||
-                                (!isLeftAssoc(token) && precedence(token) < precedence(ops.peek())))) {
-                    output.add(ops.pop());
+            } 
+            else if (isOperator(token) || token.equals("_")) { // MODIFIED: Include unary token '_'
+                // Give unary minus token '_' a high precedence (5 > 4 for '^')
+                int prec = token.equals("_") ? 5 : precedence(token); 
+
+                while (!ops.isEmpty()) {
+                    String topOp = ops.peek();
+                    if (!isOperator(topOp) && !topOp.equals("_")) break;
+
+                    int topPrec = topOp.equals("_") ? 5 : precedence(topOp);
+
+                    if ((isLeftAssoc(token) && prec <= topPrec) || (!isLeftAssoc(token) && prec < topPrec)) {
+                        output.add(ops.pop());
+                    } else {
+                        break;
+                    }
                 }
                 ops.push(token);
             } else if (token.equals("(")) ops.push(token);
@@ -61,12 +103,17 @@ public class CalculatorEngine {
         }
         return output;
     }
+
     private double evalRPN(List<String> rpn) {
         Stack<Double> st = new Stack<>();
         for (String token: rpn) {
             if (isNumber(token)) st.push(Double.parseDouble(token));
             else if (isVariable(token)) st.push(variables.getOrDefault(token, 0.0));
             else if (functions.contains(token)) applyFunction(token, st);
+            else if (token.equals("_")) { // <-- NEW LOGIC: Handle unary minus
+                if (st.isEmpty()) throw new RuntimeException("Insufficient operand for unary minus");
+                st.push(-st.pop()); // Negate the top value on the stack
+            }
             else if (isOperator(token)) {
                 if (st.size() < 2) throw new RuntimeException("Insufficient operands");
                 double b = st.pop(); double a = st.pop();
@@ -76,6 +123,7 @@ public class CalculatorEngine {
         if (st.size() != 1) throw new RuntimeException("Invalid expression");
         return st.pop();
     }
+    
     private void applyFunction(String fn, Stack<Double> st) {
         switch (fn) {
             case "sin": applyUnary(st, x -> Math.sin(adjustAngle(x))); break;
