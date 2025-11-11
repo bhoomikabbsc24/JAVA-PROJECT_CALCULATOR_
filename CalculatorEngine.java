@@ -25,10 +25,6 @@ public class CalculatorEngine {
         return evalRPN(rpn);
     }
 
-    // =================================================================
-    // CORRECTED toRPN METHOD (FIXES UNARY MINUS AMBIGUITY)
-    // =================================================================
-
     private List<String> toRPN(String expr) {
         expr = expr.replaceAll("\\s+","").replaceAll("×", "*").replaceAll("÷", "/");
         List<String> output = new ArrayList<>();
