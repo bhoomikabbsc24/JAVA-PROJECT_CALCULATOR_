@@ -104,7 +104,7 @@ public class Calculator extends JFrame implements ActionListener {
                 case "±" -> toggleSign();
                 case "π" -> insertAtCaret(Double.toString(Math.PI));
                 case "e" -> insertAtCaret(Double.toString(Math.E));
-                case "sqrt","sin","cos","tan","log","ln","abs","fact","nCr","nPr" -> insertAtCaret(cmd + "(");
+                case "sqrt","sin","cos","tan","log","ln","abs","fact","nCr","nPr" -> insertAtCaret(cmd + " (");
                 case "x" -> insertAtCaret("*");
                 case "M" -> insertAtCaret("M");
                 default -> insertAtCaret(cmd);
