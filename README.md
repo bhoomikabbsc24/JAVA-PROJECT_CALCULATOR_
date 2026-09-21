@@ -253,9 +253,7 @@ fact(5) / nCr(5,2)          → 12
 
 This project is created as part of a Java CIE 3 assessment.
 
-## 👤 Author
 
-Bhoomika BBBSC24
 
 ---
 
